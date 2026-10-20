@@ -33,6 +33,7 @@ from config.settings import (
     FRAME_HEIGHT,
     WINDOW_NAME,
     SHOW_DEBUG_EAR,
+    MIRROR_VIEW,
 )
 from src.face_detector import FaceDetector
 from src.blink_detector import BlinkDetector
@@ -73,6 +74,12 @@ def parse_arguments() -> argparse.Namespace:
         action="store_true",
         default=False,
         help="Launch in a standard floating window instead of FullScreen.",
+    )
+    parser.add_argument(
+        "--no-mirror",
+        action="store_true",
+        default=not MIRROR_VIEW,
+        help="Disable horizontal flip (mirror/selfie view).",
     )
     parser.add_argument(
         "--headless",
@@ -177,6 +184,7 @@ def main() -> int:
 
     screen_w, screen_h = get_screen_resolution()
     is_fullscreen = not args.windowed
+    is_mirrored = not args.no_mirror
 
     if not args.headless:
         # WINDOW_GUI_NORMAL completely removes Qt navigation, zoom, and save buttons!
@@ -187,7 +195,7 @@ def main() -> int:
             cv2.resizeWindow(WINDOW_NAME, 960, 540)
 
     print("Webcam initialized successfully.")
-    print(f"Eye blink detection started ({'FullScreen' if is_fullscreen else 'Windowed'}). Press Q to quit.")
+    print(f"Eye blink detection started ({'FullScreen' if is_fullscreen else 'Windowed'}, Mirror View: {'ON' if is_mirrored else 'OFF'}). Press Q to quit.")
 
     # FPS tracking variables
     fps: float = 0.0
@@ -204,6 +212,10 @@ def main() -> int:
                 print("[WARN] Failed to read frame from webcam. Retrying...", file=sys.stderr)
                 time.sleep(0.05)
                 continue
+
+            # Invert left-right for a natural selfie/mirror experience
+            if is_mirrored:
+                frame = cv2.flip(frame, 1)
 
             frame_count += 1
             current_time = time.time()
@@ -258,10 +270,15 @@ def main() -> int:
                         cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
                         cv2.resizeWindow(WINDOW_NAME, 960, 540)
                         print("Switched to Windowed mode.")
+                # M to toggle mirror mode
+                elif key in (ord("m"), ord("M")):
+                    is_mirrored = not is_mirrored
+                    print(f"Mirror mode {'enabled' if is_mirrored else 'disabled'}.")
                 # D to toggle debug EAR metrics
                 elif key in (ord("d"), ord("D")):
                     is_debug = visualizer.toggle_debug_ear()
                     print(f"Debug EAR metrics {'enabled' if is_debug else 'disabled'}.")
+
 
             # If frame limit specified (for automated testing)
             if args.frames and frame_count >= args.frames:

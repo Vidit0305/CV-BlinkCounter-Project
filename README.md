@@ -176,8 +176,10 @@ The camera window will open, displaying the live webcam stream with real-time bl
 | Key | Action | Description |
 | :---: | :---: | :--- |
 | **`Q`** / **`ESC`** | **Quit** | Closes camera window and safely exits the application. |
-| **`R`** | **Reset** | Resets the blink counter back to `0` and clears internal state without falsely registering a blink. |
-| **`D`** | **Debug EAR** | Toggles the real-time left, right, and average EAR metrics on the HUD. |
+| **`R`** | **Reset** | Resets the blink counter back to `0` without triggering a false blink. |
+| **`F`** | **FullScreen** | Toggles between FullScreen immersion and standard windowed mode. |
+| **`M`** | **Mirror View** | Toggles horizontal flip (natural mirror/selfie mode vs raw feed). |
+| **`D`** | **Debug EAR** | Toggles real-time Left, Right, and Average EAR metrics on the HUD. |
 
 ---
 
@@ -186,6 +188,12 @@ The camera window will open, displaying the live webcam stream with real-time bl
 The application accepts optional CLI flags for flexible usage:
 
 ```bash
+# Run in a standard window instead of FullScreen
+python main.py --windowed
+
+# Disable horizontal mirror flip
+python main.py --no-mirror
+
 # Run with a custom camera index (e.g. external USB webcam index 1)
 python main.py --camera 1
 
@@ -207,7 +215,10 @@ All detection thresholds and UI styling options are centralized in [`config/sett
 
 | Parameter | Default | Purpose |
 | :--- | :---: | :--- |
+| `FULLSCREEN_DEFAULT` | `True` | Starts in clean, edge-to-edge FullScreen mode without Qt toolbars. |
+| `MIRROR_VIEW` | `True` | Inverts left-right for a natural selfie/mirror experience. |
 | `EAR_THRESH_CLOSE` | `0.21` | EAR value below which an eye is considered closed. |
+
 | `EAR_THRESH_OPEN` | `0.25` | Hysteresis threshold to confirm eyes reopened. |
 | `CONSECUTIVE_FRAMES_MIN` | `2` | Minimum consecutive closed frames to qualify as a blink (filters noise). |
 | `CONSECUTIVE_FRAMES_MAX` | `45` | Upper limit for normal blinks before marking as prolonged closure. |

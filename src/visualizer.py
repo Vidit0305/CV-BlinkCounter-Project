@@ -215,10 +215,8 @@ class Visualizer:
             )
 
         # ----------------------------------------------------------------------
-        # 4. Bottom Footer: Instructions & FPS
-        # ----------------------------------------------------------------------
         footer_y = h - int(18 * scale)
-        instruction_text = "Press Q / ESC: quit | R: reset | F: toggle fullscreen | D: debug EAR"
+        instruction_text = "Press Q / ESC: quit | R: reset | F: fullscreen | M: mirror | D: debug EAR"
         cv2.putText(
             frame,
             instruction_text,

@@ -27,6 +27,7 @@ FRAME_WIDTH = 640
 FRAME_HEIGHT = 480
 TARGET_FPS = 30
 FULLSCREEN_DEFAULT = True
+MIRROR_VIEW = True  # Natural selfie/mirror orientation
 
 # ==============================================================================
 # Eye Aspect Ratio (EAR) & Blink Detection Parameters
